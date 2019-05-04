@@ -61,7 +61,7 @@ if __name__ == "__main__":
                     deviceIP_to_update.append(device['managementIpAddress'])
 
 
-       imageFound = get_images(imageName = DNAC_NEW_VERSION) 
+        imageFound = get_images(imageName = DNAC_NEW_VERSION) 
 
         # does the version exists ?
         if (imageFound == 1):
