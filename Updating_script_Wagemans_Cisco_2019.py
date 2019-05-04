@@ -25,7 +25,8 @@ deviceIP_to_update = []
 if __name__ == "__main__":
     os.system('clear')
 
-
+    deviceFound = 0
+    ImageFound = 0
 
     if len(sys.argv) > 1:
         response = list_single_device(sys.argv[1])
@@ -57,7 +58,8 @@ if __name__ == "__main__":
             #corresponding type ?
             if device['type'] == DNAC_DEVICE_TYPE:
                 # do the nevice need to be update ?
-                if device['softwareVersion'] == DNAC_NEW_VERSION:
+                if device['softwareVersion'] != DNAC_NEW_VERSION:
+                    deviceFound = 1
                     deviceIP_to_update.append(device['managementIpAddress'])
 
 
@@ -72,12 +74,20 @@ if __name__ == "__main__":
 
 
         #All the devices that must be update are now tagged -> distribute the image
-        if(imageFound == 1):
+        if(imageFound == 1 & deviceFound == 1):
+            print("Updating process launched ! \n")
             deviceIds = tagmapping(DNAC_UPDATE_TAG)
             imageId = imageName2id(DNAC_NEW_VERSION)
             validate(imageId, *deviceIds)
             distribute(imageId, *deviceIds)
             activate (imageId, *deviceIds)
+        else:
+            if(imageFound == 0):
+                print("Image not found")
+            if(deviceFound == 0):
+                print("Device not found")
+
+
 
 
 
