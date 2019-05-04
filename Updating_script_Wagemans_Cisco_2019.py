@@ -38,7 +38,9 @@ if __name__ == "__main__":
         print("{0:35}{1:50}{2:17}{3:12}{4:18}{5:20}{6:12}{7:16}{8:15}".
                   format("hostname", "type","mgmt IP","serial",
                          "platformId","SW Version","SW Type","role","Uptime"))
-
+        
+        
+        
         for device in response['response']:
             uptime = "N/A" if device['upTime'] is None else device['upTime']
             print('{0:35}{1:50}{2:17}{3:12}{4:18}{5:20}{6:12}{7:16}{8:15}'.
@@ -52,22 +54,19 @@ if __name__ == "__main__":
                          device['role'],uptime))
 
 
-            #corresponding device?
+            #corresponding type ?
             if device['type'] == DNAC_DEVICE_TYPE:
-                deviceIP_to_update.append(device['managementIpAddress'])
+                # do the nevice need to be update ?
+                if device['softwareVersion'] == DNAC_NEW_VERSION:
+                    deviceIP_to_update.append(device['managementIpAddress'])
 
 
-        imageFound = get_images(imageName = DNAC_NEW_VERSION)
+       imageFound = get_images(imageName = DNAC_NEW_VERSION) 
 
         # does the version exists ?
-
         if (imageFound == 1):
-            # needed to be update ?
-            if device['softwareVersion'] != DNAC_NEW_VERSION:
-                print("\nA device has to be update : adding tag : {0}".format(DNAC_UPDATE_TAG))
-
-                # tagging the corresponding device
-                add_tag(DNAC_UPDATE_TAG, deviceIP_to_update)
+            # adding a tag to each device needing an update
+            add_tag(DNAC_UPDATE_TAG, deviceIP_to_update)
         else:
             print("\nThe image name does not exist")
 
